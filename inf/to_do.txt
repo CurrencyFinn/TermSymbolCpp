@@ -1,0 +1,3 @@
+# Visualizing void function
+# Checking void function
+# transfer to cython to visualize in table with python
