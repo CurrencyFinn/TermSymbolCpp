@@ -33,7 +33,7 @@ int* createMList(int m) {
     return convertedMList;
 }
 
-void deleteMicroStates(float*** microstates, int nbConfig, int M) {
+extern "C" __declspec(dllexport) void deleteMicroStates(float*** microstates, int nbConfig, int M) {
     for (int i = 0; i < nbConfig; i++) {
         for (int j = 0; j < M; j++) {
             delete[] microstates[i][j];
@@ -59,7 +59,7 @@ void visMicrostates(float*** microstates, int nbConfig, int M) {
 }
 
 #ifdef __cplusplus
-extern "C" float*** calcPossibleConfig(const int l, const int vElectron, const int limit) 
+extern "C" __declspec(dllexport) float*** calcPossibleConfig(const int l, const int vElectron, const int limit) 
 {
 #endif
     const int m = (2*l+1);
@@ -242,7 +242,7 @@ extern "C" float*** calcPossibleConfig(const int l, const int vElectron, const i
 
         continue;
     }
-    visMicrostates(totalMicroStates, nbConfiguration, m);
+    //visMicrostates(totalMicroStates, nbConfiguration, m);
     // Ms + Ml values
     int MicroStatesConfigList[nbConfiguration][2];
     //std::vector<int> convertedMList = createMList(m);
@@ -279,7 +279,7 @@ extern "C" float*** calcPossibleConfig(const int l, const int vElectron, const i
         cout<<" ";
     }
     delete[] convertedMList;
-    deleteMicroStates(totalMicroStates, nbConfiguration, m);
+    //deleteMicroStates(totalMicroStates, nbConfiguration, m);
     return totalMicroStates;
 
 #ifdef __cplusplus

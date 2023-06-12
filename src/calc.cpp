@@ -8,8 +8,6 @@
 using namespace std;
 double possibleconfig[3] = {0.0f,0.5f,-0.5f};
 
-
-
 unsigned long long fc(unsigned int n)
 {
     uint64_t res=1;
@@ -19,18 +17,6 @@ unsigned long long fc(unsigned int n)
     }
     return res;
 }
-
-// std::vector<int> createMList(int m) {
-//     std::vector<int> convertedMList;
-//     int start = -(m / 2);
-//     int end = m / 2;
-
-//     for (int i = start; i <= end; i++) {
-//         convertedMList.push_back(i);
-//     }
-
-//     return convertedMList;
-// }
 
 int* createMList(int m) {
     int* convertedMList = new int[m];
@@ -183,8 +169,6 @@ void calcPossibleConfig(const int l, const int vElectron, const int limit)
                     int v = distribution(gen);
                     std::swap(tempMicroState[q], tempMicroState[v]);
                 }
-                //shuffle(tempMicroState, tempMicroState + m, gen);
-
                 // check if new in orbital
                 int i__ = i+1;
                 for(int p=0; p<i__; p++){
@@ -235,7 +219,6 @@ void calcPossibleConfig(const int l, const int vElectron, const int limit)
     }
     // Ms + Ml values
     int MicroStatesConfigList[nbConfiguration][2];
-    //std::vector<int> convertedMList = createMList(m);
     int* convertedMList = createMList(m);
     for (int i=0; i<nbConfiguration; i++)
     {
