@@ -4,9 +4,11 @@
 #include <random>
 #include <algorithm>
 #include <cstdint>
-
+#include <chrono>
 using namespace std;
 double possibleconfig[3] = {0.0f,0.5f,-0.5f};
+
+
 
 unsigned long long fc(unsigned int n)
 {
@@ -17,19 +19,59 @@ unsigned long long fc(unsigned int n)
     }
     return res;
 }
-extern "C" __declspec(dllexport) int*** calcPossibleConfig(int l, int vElectron, int limit)
-//extern "C" int8_t*** calcPossibleConfig(const int l, const int vElectron, const int limit)
-//void calcPossibleConfig(const int l, const int vElectron, const int limit) 
+
+int* createMList(int m) {
+    int* convertedMList = new int[m];
+    int start = -(m / 2);
+    int end = m / 2;
+    int index = 0;
+
+    for (int i = start; i <= end; i++) {
+        convertedMList[index++] = i;
+    }
+
+    return convertedMList;
+}
+
+void deleteMicroStates(float*** microstates, int nbConfig, int M) {
+    for (int i = 0; i < nbConfig; i++) {
+        for (int j = 0; j < M; j++) {
+            delete[] microstates[i][j];
+        }
+        delete[] microstates[i];
+    }
+    delete[] microstates;
+}
+
+void visMicrostates(float*** microstates, int nbConfig, int M) {
+    for(int i=0; i<nbConfig; i++)
+    {
+        for(int j=0; j<M; j++)
+        {
+            for(int k=0; k<2; k++) {
+                cout<<"[";
+                cout<<microstates[i][j][k]<<"]";
+            }
+            cout<<" ";
+        }
+        cout<<endl;
+    }
+}
+
+#ifdef __cplusplus
+extern "C" float*** calcPossibleConfig(const int l, const int vElectron, const int limit) 
 {
+#endif
     const int m = (2*l+1);
     const int nbConfiguration = fc(m*2)/(fc(vElectron)*fc(m*2-vElectron));
+    cout<<nbConfiguration<<endl;
 
-    //int totalMicroStates[nbConfiguration][m][2];
-    int*** totalMicroStates = new int**[nbConfiguration];
+    //float totalMicroStates[nbConfiguration][m][2];
+    float*** totalMicroStates = new float**[nbConfiguration];
     for (int i = 0; i < nbConfiguration; i++) {
-        totalMicroStates[i] = new int*[m];
-        for (int j = 0; j < m; j++) {
-            totalMicroStates[i][j] = new int[2];
+        totalMicroStates[i] = new float*[m];
+        for (int j = 0; j < m; ++j) {
+            totalMicroStates[i][j] = new float[2];
         }
     }
     int i, iCount=0;
@@ -162,6 +204,7 @@ extern "C" __declspec(dllexport) int*** calcPossibleConfig(int l, int vElectron,
                     int v = distribution(gen);
                     std::swap(tempMicroState[q], tempMicroState[v]);
                 }
+                //shuffle(tempMicroState, tempMicroState + m, gen);
 
                 // check if new in orbital
                 int i__ = i+1;
@@ -199,24 +242,56 @@ extern "C" __declspec(dllexport) int*** calcPossibleConfig(int l, int vElectron,
 
         continue;
     }
-    return totalMicroStates;
-}
+    visMicrostates(totalMicroStates, nbConfiguration, m);
+    // Ms + Ml values
+    int MicroStatesConfigList[nbConfiguration][2];
+    //std::vector<int> convertedMList = createMList(m);
+    int* convertedMList = createMList(m);
+    for (int i=0; i<nbConfiguration; i++)
+    {
+        float Ms =0;
+        int Ml =0;
 
-extern "C" __declspec(dllexport) int*** deleteArray(int*** array, int l, int vElectron)
-{
-    const int m = (2*l+1);
-    const int nbConfiguration = fc(m*2)/(fc(vElectron)*fc(m*2-vElectron));
-    for (int i = 0; i < nbConfiguration; i++) {
-        for (int j = 0; j < m; j++) {
-            delete[] array[i][j];
+        for(int j=0; j<m; j++)
+        {
+            for(int k=0; k<2; k++)
+            {
+                Ms += totalMicroStates[i][j][k];
+                if (totalMicroStates[i][j][k] != 0)
+                {
+                    Ml += convertedMList[j];
+                }
+            }
         }
-        delete[] array[i];
+        MicroStatesConfigList[i][0] = Ms;
+        MicroStatesConfigList[i][1] = Ml;
     }
-    delete[] array;
-    return 0;
-}
 
-int main()
-{
-    return 0;
+    for(int i=0; i<nbConfiguration; i++)
+    {
+        
+        for(int j=0; j<2; j++)
+        {
+            cout<<"[";
+            cout<<MicroStatesConfigList[i][j]<<"]";
+            
+        }
+        cout<<" ";
+    }
+    delete[] convertedMList;
+    deleteMicroStates(totalMicroStates, nbConfiguration, m);
+    return totalMicroStates;
+
+#ifdef __cplusplus
 }
+#endif
+
+// int main()
+// {
+//     auto start = chrono::high_resolution_clock::now();
+//     calcPossibleConfig(1,3, 5000);
+//     auto stop = chrono::high_resolution_clock::now();
+//     auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
+//     cout << duration.count() << endl;
+//     return 0;
+// }
