@@ -4,7 +4,6 @@
 #include <random>
 #include <algorithm>
 #include <cstdint>
-//#include <chrono>
 using namespace std;
 double possibleconfig[3] = {0.0f,0.5f,-0.5f};
 
@@ -31,14 +30,44 @@ int* createMList(int m) {
     return convertedMList;
 }
 
+void deleteMicroStates(float*** microstates, int nbConfig, int M) {
+    for (int i = 0; i < nbConfig; i++) {
+        for (int j = 0; j < M; j++) {
+            delete[] microstates[i][j];
+        }
+        delete[] microstates[i];
+    }
+    delete[] microstates;
+}
 
-void calcPossibleConfig(const int l, const int vElectron, const int limit) 
+void visMicrostates(float*** microstates, int nbConfig, int M) {
+    for(int i=0; i<nbConfig; i++)
+    {
+        for(int j=0; j<M; j++)
+        {
+            for(int k=0; k<2; k++) {
+                cout<<"[";
+                cout<<microstates[i][j][k]<<"]";
+            }
+            cout<<" ";
+        }
+        cout<<endl;
+    }
+}
+
+
+float*** calcPossibleConfig(const int l, const int vElectron, const int limit) 
 {
     const int m = (2*l+1);
     const int nbConfiguration = fc(m*2)/(fc(vElectron)*fc(m*2-vElectron));
     cout<<nbConfiguration<<endl;
-
-    float totalMicroStates[nbConfiguration][m][2];
+    float*** totalMicroStates = new float**[nbConfiguration];
+    for (int i = 0; i < nbConfiguration; i++) {
+        totalMicroStates[i] = new float*[m];
+        for (int j = 0; j < m; ++j) {
+            totalMicroStates[i][j] = new float[2];
+        }
+    }
     int i, iCount=0;
     int i_;
     while (i< nbConfiguration)
@@ -205,18 +234,7 @@ void calcPossibleConfig(const int l, const int vElectron, const int limit)
 
         continue;
     }
-    for(int i=0; i<nbConfiguration; i++)
-    {
-        for(int j=0; j<m; j++)
-        {
-            for(int k=0; k<2; k++) {
-                cout<<"[";
-                cout<<totalMicroStates[i][j][k]<<"]";
-            }
-            cout<<" ";
-        }
-        cout<<endl;
-    }
+    visMicrostates(totalMicroStates, nbConfiguration, m);
     // Ms + Ml values
     int MicroStatesConfigList[nbConfiguration][2];
     int* convertedMList = createMList(m);
@@ -252,7 +270,9 @@ void calcPossibleConfig(const int l, const int vElectron, const int limit)
         cout<<" ";
     }
     delete[] convertedMList;
-
+    deleteMicroStates(totalMicroStates, nbConfiguration, m);
+    //return totalMicroStates;
+    return 0;
 }
 
 int main()
