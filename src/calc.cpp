@@ -277,10 +277,6 @@ float*** calcPossibleConfig(const int l, const int vElectron, const int limit)
 
 int main()
 {
-    //auto start = chrono::high_resolution_clock::now();
     calcPossibleConfig(2,4, 5000);
-    //auto stop = chrono::high_resolution_clock::now();
-    //auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
-    //cout << duration.count() << endl;
     return 0;
 }
