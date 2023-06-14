@@ -31,20 +31,25 @@ int* createMList(int m) {
     return convertedMList;
 }
 
-void deleteMicroStates(float** microstates, int nbConfig) {
+void deleteMicroStates(float*** microstates, int nbConfig, int M) {
     for (int i = 0; i < nbConfig; i++) {
-            delete[] microstates[i];
+        for (int j = 0; j < M; j++) {
+            delete[] microstates[i][j];
+        }
+        delete[] microstates[i];
     }
     delete[] microstates;
 }
 
-void visMicrostates(float** microstates, int nbConfig, int M) {
+void visMicrostates(float*** microstates, int nbConfig, int M) {
     for(int i=0; i<nbConfig; i++)
     {
         for(int j=0; j<M; j++)
         {
+            for(int k=0; k<2; k++) {
                 cout<<"[";
-                cout<<microstates[i][j]<<"]";
+                cout<<microstates[i][j][k]<<"]";
+            }
             cout<<" ";
         }
         cout<<endl;
@@ -52,23 +57,26 @@ void visMicrostates(float** microstates, int nbConfig, int M) {
 }
 
 
-float** calcPossibleConfig(const int l, const int vElectron, const int limit) 
+float*** calcPossibleConfig(const int l, const int vElectron, const int limit) 
 {
     const int m = (2*l+1);
     const int nbConfiguration = fc(m*2)/(fc(vElectron)*fc(m*2-vElectron));
     cout<<nbConfiguration<<endl;
-    float** totalMicroStates = new float*[nbConfiguration];
+    float*** totalMicroStates = new float**[nbConfiguration];
     for (int i = 0; i < nbConfiguration; i++) {
-        totalMicroStates[i] = new float[m];
+        totalMicroStates[i] = new float*[m];
+        for (int j = 0; j < m; ++j) {
+            totalMicroStates[i][j] = new float[2];
+        }
     }
-    
-    int i =0;
+    int i = 0;
     int iCount=0;
     int i_;
     while (i< nbConfiguration)
     {
+
+        float specificMicroState[m][2];
         int pluggedInElectrons = 0;
-        float specificMicroState[m];
         for (int j=0; j<m; j++){
             int k =0;
             while(k<2)
@@ -77,13 +85,13 @@ float** calcPossibleConfig(const int l, const int vElectron, const int limit)
                 float inputElectron = possibleconfig[inputInteger];
                 if (pluggedInElectrons == vElectron) 
                 {
-                    specificMicroState[j] = 0.0f;
+                    specificMicroState[j][k] = 0.0f;
                     k++;
-                    break;
+                    continue;
                 }
                 if(k==1)
                 {
-                    while(specificMicroState[j] == inputElectron){ // pauli exclusion
+                    while(specificMicroState[j][0] == inputElectron){
                         int inputInteger = (rand() % 3);
                         float newInputElectron = possibleconfig[inputInteger];
 
@@ -93,53 +101,60 @@ float** calcPossibleConfig(const int l, const int vElectron, const int limit)
                         }
                         inputElectron = newInputElectron;
                     }
-                    if (inputElectron == specificMicroState[j]*-1) 
+                    if (inputElectron == specificMicroState[j][0]*-1) 
                     {
-                            specificMicroState[j] = 2.0f; // nomeclature of 2 electrons could rebrand it later
+                            pluggedInElectrons++;
+                            specificMicroState[j][0] = 0.5f;
+                            specificMicroState[j][1] = -0.5f;
                             k++;
-                            break;
+                            continue;
                     }
 
-                    else if (specificMicroState[j] == 0.0f && inputElectron != 0.0f) 
+                    else if (specificMicroState[j][0] == 0.0f && inputElectron != 0.0f) 
                     {
-                        specificMicroState[j] = inputElectron;
+                        pluggedInElectrons++;
+                        specificMicroState[j][0] = inputElectron;
+                        specificMicroState[j][1] = 0.0f;
                         k++;
                         continue;
                     }
                     else 
                     {
-                        specificMicroState[j] = inputElectron;
-                        k++;
-                        continue;
+                        if (inputElectron != 0.0f)
+                        {
+                            pluggedInElectrons++;
+                        }
+                        specificMicroState[j][1] = inputElectron;
+                        break;
                     }
                 }
                 else {
-                    specificMicroState[j] = inputElectron;
+                    if (inputElectron != 0.0f)
+                    {
+                        pluggedInElectrons++;
+                    }
+                    specificMicroState[j][k] = inputElectron;
                     k++;
                     continue;
                 }
-            }
-            if(specificMicroState[j] != 0.0f) {
-                if(specificMicroState[j] == 2)
-                {
-                    pluggedInElectrons++;
-                }
-                pluggedInElectrons++;
             }
         }
         if (pluggedInElectrons != vElectron)
         {
             continue;
         }
+        // first check if the value is already in the total microstates
         int i__ = i+1;
         for(int p=0; p<i__; p++){
             int resultCounter = 0;
             for (int j = 0; j < m; j++) {
-                if (totalMicroStates[p][j] == specificMicroState[j]) { 
-                    resultCounter++;
+                for (int k = 0; k < 2; k++) {
+                    if (totalMicroStates[p][j][k] == specificMicroState[j][k] && specificMicroState[j][k] != 0) {
+                        resultCounter++;
+                    }
                 }
             }
-            if (resultCounter == m) { 
+            if (resultCounter == vElectron) { 
                 p=i__;
                 break;
             }
@@ -147,12 +162,15 @@ float** calcPossibleConfig(const int l, const int vElectron, const int limit)
                 if (p==i)
                 {
                     for (int j = 0; j < m; j++) {
-                            totalMicroStates[i][j] = specificMicroState[j];
+                        for (int k = 0; k < 2; k++) {
+                            totalMicroStates[i][j][k] = specificMicroState[j][k];
+                        }
                     }
                     i++;
                 }
                 continue;
             }
+
         }
         if (i_ == i)
         {
@@ -168,11 +186,16 @@ float** calcPossibleConfig(const int l, const int vElectron, const int limit)
             while (i<nbConfiguration) 
             {   
                 int inputInteger = (rand() % i);
-                float tempMicroState[m];
+
+                float tempMicroState[m][2];
                 for(int j = 0; j<m;j++)
                 {
-                        tempMicroState[j] = totalMicroStates[inputInteger][j];
+                    for(int k=0; k<2;k++)
+                    {
+                        tempMicroState[j][k] = totalMicroStates[inputInteger][j][k];
+                    }
                 }
+                // mix orbitals addition of quick check not giving the same one could be added
                 random_device rd;
                 mt19937 gen(rd());
                 for (int q = m - 1; q > 0; --q) {
@@ -180,12 +203,15 @@ float** calcPossibleConfig(const int l, const int vElectron, const int limit)
                     int v = distribution(gen);
                     std::swap(tempMicroState[q], tempMicroState[v]);
                 }
+                // check if new in orbital
                 int i__ = i+1;
                 for(int p=0; p<i__; p++){
                     int resultCounter = 0;
                     for (int j = 0; j < m; j++) {
-                            if (totalMicroStates[p][j] == tempMicroState[j] && tempMicroState[j] != 0) {
+                        for (int k = 0; k < 2; k++) {
+                            if (totalMicroStates[p][j][k] == tempMicroState[j][k] && tempMicroState[j][k] != 0) {
                                 resultCounter++;
+                            }
                         }
                     }
                     if (resultCounter == vElectron) { 
@@ -196,16 +222,21 @@ float** calcPossibleConfig(const int l, const int vElectron, const int limit)
                         if (p==i)
                         {
                             for (int j = 0; j < m; j++) {
-                                    totalMicroStates[i][j] = tempMicroState[j];
+                                for (int k = 0; k < 2; k++) {
+                                    totalMicroStates[i][j][k] = tempMicroState[j][k];
+                                }
                             }
                             i++;
                         }
                         continue;
                     }
+
                 }
+                
             }
             break;
         }
+
         continue;
     }
     visMicrostates(totalMicroStates, nbConfiguration, m);
@@ -219,32 +250,33 @@ float** calcPossibleConfig(const int l, const int vElectron, const int limit)
 
         for(int j=0; j<m; j++)
         {
-                if(totalMicroStates[i][j] == 2){
-                    Ml += (2*convertedMList[j]);
+            for(int k=0; k<2; k++)
+            {
+                Ms += totalMicroStates[i][j][k];
+                if (totalMicroStates[i][j][k] != 0)
+                {
+                    Ml += convertedMList[j];
                 }
-                else {
-                    Ms += totalMicroStates[i][j];
-                    if (totalMicroStates[i][j] != 0)
-                    {
-                        Ml += convertedMList[j];
-                    }
-                }
+            }
         }
         MicroStatesConfigList[i][0] = Ms;
         MicroStatesConfigList[i][1] = Ml;
     }
+
     for(int i=0; i<nbConfiguration; i++)
     {
+        
         for(int j=0; j<2; j++)
         {
             cout<<"[";
             cout<<MicroStatesConfigList[i][j]<<"]";
+            
         }
         cout<<" ";
     }
     cout<<endl;
     delete[] convertedMList;
-    deleteMicroStates(totalMicroStates, nbConfiguration);
+    deleteMicroStates(totalMicroStates, nbConfiguration, m);
     //return totalMicroStates;
     return 0;
 }
@@ -256,5 +288,6 @@ int main()
     auto endTime = std::chrono::high_resolution_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
     std::cout << "Elapsed time: " << elapsedTime << " ms" << std::endl;
+
     return 0;
 }
