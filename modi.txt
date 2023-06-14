@@ -1,7 +1,13 @@
+[
 instead of having a 3d array one could also make it a 2d array. 
 Instead of a double degenerate level with -0.5, 0.5 we plug in the value 2 (or any other int then -0.5, 0.5 and 0) for the mL calculation. We say in this case that mS = 0
 For the 0.5 or -0.5 states this can be kept the same as we can just keep the multiplcation to be equal to the position.
+^ COMPLETE
+]
+
 
 Introducing mixing "parralel" with generating should speed up the process of generating,
 and thus mixing the same orbitals while we mix already all configuration of that microstate
  (the amount of differnt possibilities to mix needs to still be determined but should be relatively simpler)
+
+Combining the Ms and Ml computation directly into the generating / mixing process

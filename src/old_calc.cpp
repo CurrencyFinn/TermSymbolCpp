@@ -241,7 +241,7 @@ float*** calcPossibleConfig(const int l, const int vElectron, const int limit)
     }
     visMicrostates(totalMicroStates, nbConfiguration, m);
     // Ms + Ml values
-    int MicroStatesConfigList[nbConfiguration][2];
+    float MicroStatesConfigList[nbConfiguration][2];
     int* convertedMList = createMList(m);
     for (int i=0; i<nbConfiguration; i++)
     {
