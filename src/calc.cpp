@@ -188,7 +188,7 @@ float** calcPossibleConfig(const int l, const int vElectron, const int limit)
                                 resultCounter++;
                         }
                     }
-                    if (resultCounter == vElectron) { 
+                    if (resultCounter == m) { 
                         p=i__;
                         break;
                     }
@@ -208,7 +208,7 @@ float** calcPossibleConfig(const int l, const int vElectron, const int limit)
         }
         continue;
     }
-    visMicrostates(totalMicroStates, nbConfiguration, m);
+    //visMicrostates(totalMicroStates, nbConfiguration, m);
     // Ms + Ml values
     float MicroStatesConfigList[nbConfiguration][2];
     int* convertedMList = createMList(m);
@@ -252,7 +252,7 @@ float** calcPossibleConfig(const int l, const int vElectron, const int limit)
 int main()
 {
     auto startTime = std::chrono::high_resolution_clock::now();
-    calcPossibleConfig(3,7, 10000);
+    calcPossibleConfig(3,7, 5000);
     auto endTime = std::chrono::high_resolution_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
     std::cout << "Elapsed time: " << elapsedTime << " ms" << std::endl;

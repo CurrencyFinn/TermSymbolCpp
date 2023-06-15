@@ -284,7 +284,7 @@ float*** calcPossibleConfig(const int l, const int vElectron, const int limit)
 int main()
 {
     auto startTime = std::chrono::high_resolution_clock::now();
-    calcPossibleConfig(3,7, 5000);
+    calcPossibleConfig(2,2, 1000);
     auto endTime = std::chrono::high_resolution_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
     std::cout << "Elapsed time: " << elapsedTime << " ms" << std::endl;
