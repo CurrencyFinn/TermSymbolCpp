@@ -146,16 +146,13 @@ float** calcPossibleConfig(const int l, const int vElectron)
             else {
                 if (p==i)
                 {
+                    sort(specificMicroState, specificMicroState + m);
                     for (int j = 0; j < m; j++) {
                             totalMicroStates[i][j] = specificMicroState[j];
                     }
                     i++;
-                    cout<<i<<endl;
-                    sort(specificMicroState, specificMicroState + m);
+                    
                     while (next_permutation(specificMicroState, specificMicroState + m)) {
-                        if(i >= nbConfiguration){
-                            break;
-                        }
                         for (int j = 0; j < m; j++) {
                             totalMicroStates[i][j] = specificMicroState[j];
                         }
@@ -167,7 +164,6 @@ float** calcPossibleConfig(const int l, const int vElectron)
         }
         continue;
     }
-
     //Ms + Ml values
     float MicroStatesConfigList[nbConfiguration][2];
     int* convertedMList = createMList(m);
@@ -203,6 +199,7 @@ float** calcPossibleConfig(const int l, const int vElectron)
     }
     cout<<endl;
     delete[] convertedMList;
+    visMicrostates(totalMicroStates,nbConfiguration,m);
     deleteMicroStates(totalMicroStates, nbConfiguration);
     return 0;
 }
