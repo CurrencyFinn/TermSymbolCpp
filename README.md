@@ -24,6 +24,15 @@ if __name__ == "__main__":
     pathToCsv = "output.csv"
     main(pathToCsv)
 ```
+
+Example output of Carbon multi-electrons atom:
+|      | -5.0 | -4.0 | -3.0 | -2.0 | -1.0 |  0.0 |  1.0 |  2.0 |  3.0 |  4.0 |  5.0 |
+|------|------|------|------|------|------|------|------|------|------|------|------|
+| -1.5 |  0   |  0   |  1   |  1   |  2   |  2   |  2   |  1   |  1   |  0   |  0   |
+| -0.5 |  1   |  2   |  4   |  6   |  8   |  8   |  8   |  6   |  4   |  2   |  1   |
+|  0.5 |  1   |  2   |  4   |  6   |  8   |  8   |  8   |  6   |  4   |  2   |  1   |
+|  1.5 |  0   |  0   |  1   |  1   |  2   |  2   |  2   |  1   |  1   |  0   |  0   |
+
 The code should be optimized enough to generate readily the term tables (~350 ms for a 3,7 input)
 
 ## Optimizations
