@@ -47,30 +47,37 @@ void visMicrostates(float** microstates, int nbConfig, int M) {
                 cout<<microstates[i][j]<<"]";
             cout<<" ";
         }
-        cout<<endl;
+        cout<<"\n";
     }
 }
 
 
-float** calcPossibleConfig(const int l, const int vElectron) 
+void calcPossibleConfig(const int l, const int vElectron) 
 {
     const int m = (2*l+1);
     const int nbConfiguration = fc(m*2)/(fc(vElectron)*fc(m*2-vElectron));
     cout<<nbConfiguration<<endl;
+
+    int i_;
+    int i__;
+    float Ms;
+    int Ml;
+    int resultCounter;
     float** totalMicroStates = new float*[nbConfiguration];
+    float MicroStatesConfigList[nbConfiguration][2];
+    int* convertedMList = createMList(m);
     for (int i = 0; i < nbConfiguration; i++) {
         totalMicroStates[i] = new float[m];
     }
-    
+    int k;
+
     int i =0;
-    int iCount=0;
-    int i_;
     while (i< nbConfiguration)
     {
         int pluggedInElectrons = 0;
         float* specificMicroState = new float[m];
         for (int j=0; j<m; j++){
-            int k =0;
+            k =0;
             while(k<2)
             {
                 int inputInteger = (rand() % 3);
@@ -95,7 +102,7 @@ float** calcPossibleConfig(const int l, const int vElectron)
                     }
                     if (inputElectron == specificMicroState[j]*-1) 
                     {
-                            specificMicroState[j] = 2.0f; // nomeclature of 2 electrons could rebrand it later
+                            specificMicroState[j] = 2.0f; // nomeclature of 2 electrons
                             k++;
                             break;
                     }
@@ -131,9 +138,9 @@ float** calcPossibleConfig(const int l, const int vElectron)
         {
             continue;
         }
-        int i__ = i+1;
+        i__ = i+1;
         for(int p=0; p<i__; p++){
-            int resultCounter = 0;
+            resultCounter = 0;
             for (int j = 0; j < m; j++) {
                 if (totalMicroStates[p][j] == specificMicroState[j]) { 
                     resultCounter++;
@@ -147,47 +154,45 @@ float** calcPossibleConfig(const int l, const int vElectron)
                 if (p==i)
                 {
                     sort(specificMicroState, specificMicroState + m);
+                    Ms = 0, Ml =0;
                     for (int j = 0; j < m; j++) {
                             totalMicroStates[i][j] = specificMicroState[j];
+                            if(specificMicroState[j] != 0){
+                                if (specificMicroState[j] == 2){
+                                    Ml += 2*convertedMList[j];
+                                }
+                                else{
+                                    Ms += specificMicroState[j];
+                                    Ml += convertedMList[j];
+                                }
+                            }
                     }
+                    MicroStatesConfigList[i][0] = Ms;
+                    MicroStatesConfigList[i][1] = Ml;
                     i++;
-                    
+                    Ml = 0;
                     while (next_permutation(specificMicroState, specificMicroState + m)) {
                         for (int j = 0; j < m; j++) {
                             totalMicroStates[i][j] = specificMicroState[j];
+                            if(specificMicroState[j] != 0){
+                                if (specificMicroState[j] == 2){
+                                    Ml += 2*convertedMList[j];
+                                }
+                                else{
+                                    Ml += convertedMList[j];
+                                }
+                            }
                         }
+                        MicroStatesConfigList[i][0] = Ms;
+                        MicroStatesConfigList[i][1] = Ml;
                         i++;
+                        Ml = 0;
                     }
                 }
                 continue;
             }
         }
         continue;
-    }
-    //Ms + Ml values
-    auto startTime = std::chrono::high_resolution_clock::now();
-    float MicroStatesConfigList[nbConfiguration][2];
-    int* convertedMList = createMList(m);
-    for (int i=0; i<nbConfiguration; i++)
-    {
-        float Ms =0;
-        int Ml =0;
-
-        for(int j=0; j<m; j++)
-        {
-                if(totalMicroStates[i][j] == 2){
-                    Ml += (2*convertedMList[j]);
-                }
-                else {
-                    Ms += totalMicroStates[i][j];
-                    if (totalMicroStates[i][j] != 0)
-                    {
-                        Ml += convertedMList[j];
-                    }
-                }
-        }
-        MicroStatesConfigList[i][0] = Ms;
-        MicroStatesConfigList[i][1] = Ml;
     }
     for(int i=0; i<nbConfiguration; i++)
     {
@@ -199,13 +204,9 @@ float** calcPossibleConfig(const int l, const int vElectron)
         cout<<" ";
     }
     cout<<endl;
-    auto endTime = std::chrono::high_resolution_clock::now();
-    auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
-    std::cout << "Elapsed time: " << elapsedTime << " ms" << std::endl;
     delete[] convertedMList;
-    visMicrostates(totalMicroStates,nbConfiguration,m);
+    //visMicrostates(totalMicroStates,nbConfiguration,m);
     deleteMicroStates(totalMicroStates, nbConfiguration);
-    return 0;
 }
 
 int main()

@@ -14,4 +14,9 @@ If new generated is inside it it does not need to mix
 ]
 
 Combining the Ms and Ml computation directly into the generating / mixing process (Ms stays constant with permutation method)
-^ takes approx 15% of the time
+^ COMPLETE
+
+With new permutation method all 0 input can be deleted and only electrons have to be put in, 0 will be put in when all electrons have been put in
+
+1,2:
+[0][2] [0][0] [0][-2] [0][0] [0][-1] [0][1] [0][1] [0][-1] [0][0] [-1][-1] [-1][0] [-1][1] [1][1] [1][0] [1][-1] 

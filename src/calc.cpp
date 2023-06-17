@@ -52,29 +52,32 @@ void visMicrostates(float** microstates, int nbConfig, int M) {
 }
 
 
-float** calcPossibleConfig(const int l, const int vElectron) 
+void calcPossibleConfig(const int l, const int vElectron) 
 {
     const int m = (2*l+1);
     const int nbConfiguration = fc(m*2)/(fc(vElectron)*fc(m*2-vElectron));
     cout<<nbConfiguration<<endl;
+
+    int i_;
+    int i__;
+    float Ms;
+    int Ml;
+    int resultCounter;
     float** totalMicroStates = new float*[nbConfiguration];
     float MicroStatesConfigList[nbConfiguration][2];
     int* convertedMList = createMList(m);
     for (int i = 0; i < nbConfiguration; i++) {
         totalMicroStates[i] = new float[m];
     }
-    
+    int k;
+
     int i =0;
-    int iCount=0;
-    int i_;
-    float Ms;
-    int Ml;
     while (i< nbConfiguration)
     {
         int pluggedInElectrons = 0;
         float* specificMicroState = new float[m];
         for (int j=0; j<m; j++){
-            int k =0;
+            k =0;
             while(k<2)
             {
                 int inputInteger = (rand() % 3);
@@ -87,6 +90,10 @@ float** calcPossibleConfig(const int l, const int vElectron)
                 }
                 if(k==1)
                 {
+                    if(inputElectron == 0.0f) {
+                        k++;
+                        continue;
+                    }
                     while(specificMicroState[j] == inputElectron){ // pauli exclusion
                         int inputInteger = (rand() % 3);
                         float newInputElectron = possibleconfig[inputInteger];
@@ -99,7 +106,7 @@ float** calcPossibleConfig(const int l, const int vElectron)
                     }
                     if (inputElectron == specificMicroState[j]*-1) 
                     {
-                            specificMicroState[j] = 2.0f; // nomeclature of 2 electrons could rebrand it later
+                            specificMicroState[j] = 2.0f; // nomeclature of 2 electrons
                             k++;
                             break;
                     }
@@ -135,9 +142,9 @@ float** calcPossibleConfig(const int l, const int vElectron)
         {
             continue;
         }
-        int i__ = i+1;
+        i__ = i+1;
         for(int p=0; p<i__; p++){
-            int resultCounter = 0;
+            resultCounter = 0;
             for (int j = 0; j < m; j++) {
                 if (totalMicroStates[p][j] == specificMicroState[j]) { 
                     resultCounter++;
@@ -204,13 +211,12 @@ float** calcPossibleConfig(const int l, const int vElectron)
     delete[] convertedMList;
     //visMicrostates(totalMicroStates,nbConfiguration,m);
     deleteMicroStates(totalMicroStates, nbConfiguration);
-    return 0;
 }
 
 int main()
 {
     auto startTime = std::chrono::high_resolution_clock::now();
-    calcPossibleConfig(2,3);
+    calcPossibleConfig(3,7);
     auto endTime = std::chrono::high_resolution_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
     std::cout << "Elapsed time: " << elapsedTime << " ms" << std::endl;
