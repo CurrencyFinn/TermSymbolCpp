@@ -1,5 +1,6 @@
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)]([https://opensource.org/licenses/MIT](https://github.com/CurrencyFinn/TermSymbolCpp/blob/main/LICENSE))
-[![Version](https://img.shields.io/badge/Version-1.0.0-blue.svg)]((https://api.github.com/repos/CurrencyFinn/TermSymbolCpp/releases/latest))
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT](https://github.com/CurrencyFinn/TermSymbolCpp/blob/main/LICENSE)
+[![Version](https://img.shields.io/badge/Version-1.0.0-blue.svg)](https://your-project-releases-url](https://github.com/CurrencyFinn/TermSymbolCpp/releases/)
+
 # TermSymbolsCPP
 
 TermsymbolsCPP is a library that uses C++ to generate all possible configuration of a multi-electron atom. With the use of the angular momentum quantum number, l, and the amount of valence electrons a table is generated.
