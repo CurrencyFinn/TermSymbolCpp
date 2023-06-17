@@ -1,11 +1,51 @@
-# TermSymbolCpp
+# TermSymbolsCPP
 
-Fill in l. amount of valance electrons and calculate the Ms and Ml values per 
+TermsymbolsCPP is a library that uses C++ to generate all possible configuration of the complex. With the use of the angular momentum quantum number, l, and the amount of valence electrons a table is generated.
 
-Americium calculation improvements:
+## Usage
 
-Python: 224s
-C++ (3D array)*: 20 s 
-C++ (2D array): 14939 ms / 4722 ms / 316 ms
+First a output csv file is needed to be generated using the calc.cpp file. Here the inputs are the angular momentum quantum number, l, and the amount of valance electrons, vE.
 
-* did actual faulty calculations
+```cpp
+int main()
+{
+    calcPossibleConfig(l,vE);
+    return 0;
+}
+````
+
+Now the path of the output csv is copied over to termTables.py file where a table is generated with all relevant values to extract the term symbols.
+
+```python
+if __name__ == "__main__":
+    pathToCsv = "output.csv"
+    main(pathToCsv)
+```
+The code should be optimized enough to generate readily the term tables (~350 ms for a 3,7 input)
+
+## Optimizations
+Several optimizations have caused drastic improvement in performance compared to [TermSymbolsPy](https://github.com/CurrencyFinn/TermSymbolsPy). 
+* Language rewrite
+* Decrease in array size (3D → 2D)
+* Ms, Ml value immediate append
+* Generation combined with mixing
+* Mixing with permutations
+* No limit variable
+* No computation with Pauli exclusion ([0, 0.5,-0.5] → [2, 0.5,-0.5])
+
+## Improvements
+
+* Overal generation is still slow and still random therefore can be accessed to a faster path. 
+* Immediate import towards python 
+* pip install possibilities
+
+## Contributing
+
+Pull requests are welcome. For major changes, please open an issue first
+to discuss what you would like to change.
+
+Please make sure to update tests as appropriate.
+
+## License
+
+[MIT](https://github.com/CurrencyFinn/TermSymbolCpp/blob/main/LICENSE)
