@@ -90,6 +90,10 @@ void calcPossibleConfig(const int l, const int vElectron)
                 }
                 if(k==1)
                 {
+                    if(inputElectron == 0.0f) {
+                        k++;
+                        continue;
+                    }
                     while(specificMicroState[j] == inputElectron){ // pauli exclusion
                         int inputInteger = (rand() % 3);
                         float newInputElectron = possibleconfig[inputInteger];
@@ -212,7 +216,7 @@ void calcPossibleConfig(const int l, const int vElectron)
 int main()
 {
     auto startTime = std::chrono::high_resolution_clock::now();
-    calcPossibleConfig(3,7);
+    calcPossibleConfig(1,2);
     auto endTime = std::chrono::high_resolution_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
     std::cout << "Elapsed time: " << elapsedTime << " ms" << std::endl;

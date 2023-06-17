@@ -4,9 +4,10 @@
 #include <random>
 #include <algorithm>
 #include <cstdint>
+#include <fstream>
 #include <chrono>
 using namespace std;
-double possibleconfig[3] = {0.0f,0.5f,-0.5f};
+double possibleconfig[3] = {2,0.5f,-0.5f};
 
 unsigned long long fc(unsigned int n)
 {
@@ -51,6 +52,26 @@ void visMicrostates(float** microstates, int nbConfig, int M) {
     }
 }
 
+void writeArrayToCSV(float** array, int numRows, int numCols, const std::string& filename) {
+    std::ofstream file(filename);
+
+    if (file.is_open()) {
+        for (int i = 0; i < numRows; ++i) {
+            file << array[i][0]; // Write the first index value
+
+            for (int j = 1; j < numCols; ++j) {
+                file << ',' << array[i][j]; // Write the values in the row separated by commas
+            }
+
+            file << '\n'; // Move to the next line
+        }
+
+        file.close();
+        std::cout << "Array successfully written to " << filename << std::endl;
+    } else {
+        std::cerr << "Unable to open file: " << filename << std::endl;
+    }
+}
 
 void calcPossibleConfig(const int l, const int vElectron) 
 {
@@ -63,9 +84,13 @@ void calcPossibleConfig(const int l, const int vElectron)
     float Ms;
     int Ml;
     int resultCounter;
-    float** totalMicroStates = new float*[nbConfiguration];
-    float MicroStatesConfigList[nbConfiguration][2];
     int* convertedMList = createMList(m);
+    //float MicroStatesConfigList[nbConfiguration][2];
+    float** MicroStatesConfigList = new float*[nbConfiguration];
+    for (int i = 0; i < nbConfiguration; i++) {
+        MicroStatesConfigList[i] = new float[2];
+    }
+    float** totalMicroStates = new float*[nbConfiguration];
     for (int i = 0; i < nbConfiguration; i++) {
         totalMicroStates[i] = new float[m];
     }
@@ -77,65 +102,25 @@ void calcPossibleConfig(const int l, const int vElectron)
         int pluggedInElectrons = 0;
         float* specificMicroState = new float[m];
         for (int j=0; j<m; j++){
-            k =0;
-            while(k<2)
+
+
+            if (pluggedInElectrons == vElectron) 
+            {
+                specificMicroState[j] = 0.0f;
+                k++;
+                continue;
+            }
+            else
             {
                 int inputInteger = (rand() % 3);
                 float inputElectron = possibleconfig[inputInteger];
-                if (pluggedInElectrons == vElectron) 
-                {
-                    specificMicroState[j] = 0.0f;
-                    k++;
-                    break;
-                }
-                if(k==1)
-                {
-                    if(inputElectron == 0.0f) {
-                        k++;
-                        continue;
-                    }
-                    while(specificMicroState[j] == inputElectron){ // pauli exclusion
-                        int inputInteger = (rand() % 3);
-                        float newInputElectron = possibleconfig[inputInteger];
-
-                        if (newInputElectron != inputElectron) {
-                            inputElectron = newInputElectron;
-                            break; 
-                        }
-                        inputElectron = newInputElectron;
-                    }
-                    if (inputElectron == specificMicroState[j]*-1) 
-                    {
-                            specificMicroState[j] = 2.0f; // nomeclature of 2 electrons
-                            k++;
-                            break;
-                    }
-
-                    else if (specificMicroState[j] == 0.0f && inputElectron != 0.0f) 
-                    {
-                        specificMicroState[j] = inputElectron;
-                        k++;
-                        continue;
-                    }
-                    else 
-                    {
-                        specificMicroState[j] = inputElectron;
-                        k++;
-                        continue;
-                    }
-                }
-                else {
-                    specificMicroState[j] = inputElectron;
-                    k++;
-                    continue;
-                }
-            }
-            if(specificMicroState[j] != 0.0f) {
+                specificMicroState[j] = inputElectron;
                 if(specificMicroState[j] == 2)
                 {
                     pluggedInElectrons++;
                 }
                 pluggedInElectrons++;
+                continue;
             }
         }
         if (pluggedInElectrons != vElectron)
@@ -210,6 +195,8 @@ void calcPossibleConfig(const int l, const int vElectron)
     cout<<endl;
     delete[] convertedMList;
     //visMicrostates(totalMicroStates,nbConfiguration,m);
+    writeArrayToCSV(MicroStatesConfigList, nbConfiguration, 2, "output.csv");
+    deleteMicroStates(MicroStatesConfigList, nbConfiguration);
     deleteMicroStates(totalMicroStates, nbConfiguration);
 }
 
