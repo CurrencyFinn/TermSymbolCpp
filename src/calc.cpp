@@ -1,12 +1,9 @@
 #include <iostream>
-#include <vector>
-#include <cstdlib>
 #include <random>
 #include <algorithm>
-#include <cstdint>
 #include <fstream>
-#include <chrono>
-using namespace std;
+using  std::cout, std::endl;
+
 double possibleconfig[3] = {2,0.5f,-0.5f};
 
 unsigned long long fc(unsigned int n)
@@ -142,7 +139,7 @@ void calcPossibleConfig(const int l, const int vElectron)
             else {
                 if (p==i)
                 {
-                    sort(specificMicroState, specificMicroState + m);
+                    std::sort(specificMicroState, specificMicroState + m);
                     Ms = 0, Ml =0;
                     for (int j = 0; j < m; j++) {
                             totalMicroStates[i][j] = specificMicroState[j];
@@ -160,7 +157,7 @@ void calcPossibleConfig(const int l, const int vElectron)
                     MicroStatesConfigList[i][1] = Ml;
                     i++;
                     Ml = 0;
-                    while (next_permutation(specificMicroState, specificMicroState + m)) {
+                    while (std::next_permutation(specificMicroState, specificMicroState + m)) {
                         for (int j = 0; j < m; j++) {
                             totalMicroStates[i][j] = specificMicroState[j];
                             if(specificMicroState[j] != 0){
@@ -183,16 +180,16 @@ void calcPossibleConfig(const int l, const int vElectron)
         }
         continue;
     }
-    for(int i=0; i<nbConfiguration; i++)
-    {
-        for(int j=0; j<2; j++)
-        {
-            cout<<"[";
-            cout<<MicroStatesConfigList[i][j]<<"]";
-        }
-        cout<<" ";
-    }
-    cout<<endl;
+    // for(int i=0; i<nbConfiguration; i++)
+    // {
+    //     for(int j=0; j<2; j++)
+    //     {
+    //         cout<<"[";
+    //         cout<<MicroStatesConfigList[i][j]<<"]";
+    //     }
+    //     cout<<" ";
+    // }
+    //cout<<endl;
     delete[] convertedMList;
     //visMicrostates(totalMicroStates,nbConfiguration,m);
     writeArrayToCSV(MicroStatesConfigList, nbConfiguration, 2, "output.csv");
@@ -202,10 +199,6 @@ void calcPossibleConfig(const int l, const int vElectron)
 
 int main()
 {
-    auto startTime = std::chrono::high_resolution_clock::now();
     calcPossibleConfig(3,7);
-    auto endTime = std::chrono::high_resolution_clock::now();
-    auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
-    std::cout << "Elapsed time: " << elapsedTime << " ms" << std::endl;
     return 0;
 }
