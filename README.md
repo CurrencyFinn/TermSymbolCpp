@@ -1,6 +1,6 @@
 # TermSymbolsCPP
 
-TermsymbolsCPP is a library that uses C++ to generate all possible configuration of the complex. With the use of the angular momentum quantum number, l, and the amount of valence electrons a table is generated.
+TermsymbolsCPP is a library that uses C++ to generate all possible configuration of a multi-electron atom. With the use of the angular momentum quantum number, l, and the amount of valence electrons a table is generated.
 
 ## Usage
 
