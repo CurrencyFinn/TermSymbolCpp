@@ -1,5 +1,5 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/CurrencyFinn/TermSymbolCpp/blob/main/LICENSE)
-[![Version](https://img.shields.io/badge/Version-1.0.0-blue.svg)](https://github.com/CurrencyFinn/TermSymbolCpp/releases/)
+[![Version](https://img.shields.io/badge/Version-0.0.1.0-blue.svg)](https://github.com/CurrencyFinn/TermSymbolCpp/releases/)
 
 # TermSymbolsCPP
 
