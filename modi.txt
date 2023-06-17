@@ -5,10 +5,13 @@ For the 0.5 or -0.5 states this can be kept the same as we can just keep the mul
 ^ COMPLETE
 ]
 
-
+[
 Introducing mixing "parralel" with generating should speed up the process of generating,
 and thus mixing the same orbitals while we mix already all configuration of that microstate
  (the amount of differnt possibilities to mix needs to still be determined but should be relatively simpler)
 If new generated is inside it it does not need to mix
+^ COMPLETE
+]
 
-Combining the Ms and Ml computation directly into the generating / mixing process
+Combining the Ms and Ml computation directly into the generating / mixing process (Ms stays constant with permutation method)
+^ takes approx 15% of the time

@@ -52,7 +52,7 @@ void visMicrostates(float** microstates, int nbConfig, int M) {
 }
 
 
-float** calcPossibleConfig(const int l, const int vElectron, const int limit) 
+float** calcPossibleConfig(const int l, const int vElectron) 
 {
     const int m = (2*l+1);
     const int nbConfiguration = fc(m*2)/(fc(vElectron)*fc(m*2-vElectron));
@@ -68,7 +68,7 @@ float** calcPossibleConfig(const int l, const int vElectron, const int limit)
     while (i< nbConfiguration)
     {
         int pluggedInElectrons = 0;
-        float specificMicroState[m];
+        float* specificMicroState = new float[m];
         for (int j=0; j<m; j++){
             int k =0;
             while(k<2)
@@ -146,70 +146,26 @@ float** calcPossibleConfig(const int l, const int vElectron, const int limit)
             else {
                 if (p==i)
                 {
+                    sort(specificMicroState, specificMicroState + m);
                     for (int j = 0; j < m; j++) {
                             totalMicroStates[i][j] = specificMicroState[j];
                     }
                     i++;
+                    
+                    while (next_permutation(specificMicroState, specificMicroState + m)) {
+                        for (int j = 0; j < m; j++) {
+                            totalMicroStates[i][j] = specificMicroState[j];
+                        }
+                        i++;
+                    }
                 }
                 continue;
             }
         }
-        if (i_ == i)
-        {
-            iCount++;
-        }
-        else
-        {
-            iCount = 0;
-            i_ = i;
-        }
-        if (iCount >= limit) {
-            float randomMicroState;
-            while (i<nbConfiguration) 
-            {   
-                int inputInteger = (rand() % i);
-                float tempMicroState[m];
-                for(int j = 0; j<m;j++)
-                {
-                        tempMicroState[j] = totalMicroStates[inputInteger][j];
-                }
-                random_device rd;
-                mt19937 gen(rd());
-                for (int q = m - 1; q > 0; --q) {
-                    std::uniform_int_distribution<int> distribution(0, q);
-                    int v = distribution(gen);
-                    std::swap(tempMicroState[q], tempMicroState[v]);
-                }
-                int i__ = i+1;
-                for(int p=0; p<i__; p++){
-                    int resultCounter = 0;
-                    for (int j = 0; j < m; j++) {
-                            if (totalMicroStates[p][j] == tempMicroState[j] && tempMicroState[j] != 0) {
-                                resultCounter++;
-                        }
-                    }
-                    if (resultCounter == m) { 
-                        p=i__;
-                        break;
-                    }
-                    else {
-                        if (p==i)
-                        {
-                            for (int j = 0; j < m; j++) {
-                                    totalMicroStates[i][j] = tempMicroState[j];
-                            }
-                            i++;
-                        }
-                        continue;
-                    }
-                }
-            }
-            break;
-        }
         continue;
     }
-    //visMicrostates(totalMicroStates, nbConfiguration, m);
-    // Ms + Ml values
+    //Ms + Ml values
+    auto startTime = std::chrono::high_resolution_clock::now();
     float MicroStatesConfigList[nbConfiguration][2];
     int* convertedMList = createMList(m);
     for (int i=0; i<nbConfiguration; i++)
@@ -243,16 +199,19 @@ float** calcPossibleConfig(const int l, const int vElectron, const int limit)
         cout<<" ";
     }
     cout<<endl;
+    auto endTime = std::chrono::high_resolution_clock::now();
+    auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+    std::cout << "Elapsed time: " << elapsedTime << " ms" << std::endl;
     delete[] convertedMList;
+    visMicrostates(totalMicroStates,nbConfiguration,m);
     deleteMicroStates(totalMicroStates, nbConfiguration);
-    //return totalMicroStates;
     return 0;
 }
 
 int main()
 {
     auto startTime = std::chrono::high_resolution_clock::now();
-    calcPossibleConfig(3,7, 5000);
+    calcPossibleConfig(3,7);
     auto endTime = std::chrono::high_resolution_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
     std::cout << "Elapsed time: " << elapsedTime << " ms" << std::endl;
