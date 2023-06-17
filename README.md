@@ -6,6 +6,6 @@ Americium calculation improvements:
 
 Python: 224s
 C++ (3D array)*: 20 s 
-C++ (2D array): 16.6 s
+C++ (2D array): 14939 ms
 
 * did actual faulty calculations
